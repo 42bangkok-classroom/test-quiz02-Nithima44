@@ -1,20 +1,23 @@
-import axios from 'axios';
+import axios from "axios";
+
+interface Address {
+  street: string;
+  suite: string;
+  city: string;
+  zipcode: string;
+  geo: {
+    lat: string;
+    lng: string;
+  };
+}
+
 interface User2 {
   id: number;
   name?: string;
   phone?: string;
   username?: string;
   email?: string;
-  address?: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-    geo: {
-      lat: string;
-      lng: string;
-    };
-  };
+  address?: Address | null; 
   website?: string;
   company?: {
     name: string;
@@ -22,45 +25,45 @@ interface User2 {
     bs: string;
   };
 }
-interface formatUser {
+
+interface FormatUser {
   id: number;
   name: string | null;
   phone: string | null;
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-    geo: {
-      lat: string;
-      lng: string;
-    };
-  } | null;
+  address: Address | null;
 }
-export const addUser = async (newData: User2 | null): Promise<formatUser[]> => {
+
+type NewUser = Omit<User2, "id">;
+
+export const addUser = async (
+  newData: NewUser | null
+): Promise<FormatUser[]> => {
   try {
-    const url = 'https://jsonplaceholder.typicode.com/users';
-    const { data } = await axios.get<User2[] & { id: number }[]>(url);
-    const format: formatUser[] = data.map((user) => ({
+    const url = "https://jsonplaceholder.typicode.com/users";
+    const { data } = await axios.get<User2[]>(url);
+
+    const result: FormatUser[] = data.map((user) => ({
       id: user.id,
       name: user.name ?? null,
       phone: user.phone ?? null,
       address: user.address ?? null,
     }));
+
     if (!newData) {
-      return format;
+      return result;
     }
-    const lastId = format.length > 0 ? format[format.length - 1].id : 0;
-    const newId = lastId + 1;
-    const newEntry: formatUser = {
-      id: newId,
+
+    const lastId = result.length > 0 ? result[result.length - 1].id : 0;
+
+    result.push({
+      id: lastId + 1,
       name: newData.name ?? null,
-      address: newData.address ?? null,
       phone: newData.phone ?? null,
-    };
-    format.push(newEntry);
-    return format;
-  } catch (error) {
+      address: newData.address ?? null,
+    });
+
+    return result;
+  } catch {
     return [];
   }
 };
