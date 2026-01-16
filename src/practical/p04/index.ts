@@ -16,14 +16,12 @@ interface User4 {
   phone: string;
   address: Address;
 }
-
 interface Todo {
   userId: number;
   id: number;
   title: string;
   completed: boolean;
 }
-
 interface UserWithTodos {
   id: number;
   name: string;
@@ -39,14 +37,15 @@ export const getTodosByUserId = async (
     const usersUrl = "https://jsonplaceholder.typicode.com/users";
     const todosUrl = "https://jsonplaceholder.typicode.com/todos";
 
-    const [usersRes, todosRes] = await Promise.all([
-      axios.get<User4[]>(usersUrl),
-      axios.get<Todo[]>(todosUrl),
-    ]);
+    const usersRes = await axios.get<User4[]>(usersUrl);
+    const todosRes = await axios.get<Todo[]>(todosUrl);
+
     const user = usersRes.data.find((u) => u.id === id);
+
     if (!user) {
       return "Invalid id";
     }
+
     const userTodos = todosRes.data.filter(
       (todo) => todo.userId === id
     );
