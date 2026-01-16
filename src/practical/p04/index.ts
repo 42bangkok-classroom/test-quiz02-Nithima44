@@ -10,18 +10,20 @@ interface Address {
   };
 }
 
-interface User4 {
+interface User {
   id: number;
   name: string;
   phone: string;
   address: Address;
 }
+
 interface Todo {
   userId: number;
   id: number;
   title: string;
   completed: boolean;
 }
+
 interface UserWithTodos {
   id: number;
   name: string;
@@ -37,19 +39,15 @@ export const getTodosByUserId = async (
     const usersUrl = "https://jsonplaceholder.typicode.com/users";
     const todosUrl = "https://jsonplaceholder.typicode.com/todos";
 
-    const usersRes = await axios.get<User4[]>(usersUrl);
-    const todosRes = await axios.get<Todo[]>(todosUrl);
-
+    const [usersRes, todosRes] = await Promise.all([
+      axios.get<User[]>(usersUrl),
+      axios.get<Todo[]>(todosUrl),
+    ]);
     const user = usersRes.data.find((u) => u.id === id);
-
     if (!user) {
       return "Invalid id";
     }
-
-    const userTodos = todosRes.data.filter(
-      (todo) => todo.userId === id
-    );
-
+    const userTodos = todosRes.data.filter((todo) => todo.userId === id);
     return {
       id: user.id,
       name: user.name,
@@ -57,7 +55,7 @@ export const getTodosByUserId = async (
       address: user.address,
       todos: userTodos,
     };
-  } catch {
+  } catch (error) {
     return "Invalid id";
   }
 };
