@@ -51,4 +51,4 @@ export const safeFetchUser = async (userId: number): Promise<SafeOp | null> => {
     return null;
   }
 };
-safeFetchUser(1).then((result) => console.log(result));
+

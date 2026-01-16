@@ -1,7 +1,8 @@
 import axios from 'axios';
-type newUser = {
+interface User2 {
   id: number;
-  name: string;
+  name?: string;
+  phone?: string;
   username?: string;
   email?: string;
   address?: {
@@ -13,15 +14,14 @@ type newUser = {
       lat: string;
       lng: string;
     };
-  } | null;
-  phone: string;
+  };
   website?: string;
   company?: {
     name: string;
     catchPhrase: string;
     bs: string;
   };
-};
+}
 interface formatUser {
   id: number;
   name: string | null;
@@ -37,10 +37,10 @@ interface formatUser {
     };
   } | null;
 }
-export const addUser = async (newData: newUser | null): Promise<formatUser[]> => {
+export const addUser = async (newData: User2 | null): Promise<formatUser[]> => {
   try {
     const url = 'https://jsonplaceholder.typicode.com/users';
-    const { data } = await axios.get<newUser[] & { id: number }[]>(url);
+    const { data } = await axios.get<User2[] & { id: number }[]>(url);
     const format: formatUser[] = data.map((user) => ({
       id: user.id,
       name: user.name ?? null,
@@ -64,3 +64,31 @@ export const addUser = async (newData: newUser | null): Promise<formatUser[]> =>
     return [];
   }
 };
+//Example usage
+addUser({
+  id: 1,
+  name: "John Doe",
+  phone: "1234567890",
+  username: "johndoe",
+  email: "johndoe@example.com",
+  address: {
+    street: "123 Main St",
+    suite: "Apt 1",
+    city: "Anytown",
+    zipcode: "12345",
+    geo: {
+      lat: "-37.3159",
+      lng: "81.1496"
+    }
+  },
+  website: "https://johndoe.com",
+  company: {
+    name: "John Doe Company",
+    catchPhrase: "John Doe Company",
+    bs: "John Doe Company"
+  }
+}).then((output) => {
+  // Use JSON.stringify to see the full object structure without [Object]
+  console.log(JSON.stringify(output, null, 2));
+});
+
