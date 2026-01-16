@@ -1,53 +1,64 @@
-import axios from 'axios';
+import axios from "axios";
+interface Address {
+  street: string;
+  suite: string;
+  city: string;
+  zipcode: string;
+  geo: {
+    lat: string;
+    lng: string;
+  };
+}
+
 interface User4 {
   id: number;
   name: string;
   phone: string;
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-    geo: {
-      lat: string;
-      lng: string;
-    };
-  };
+  address: Address;
 }
-interface todos {
+
+interface Todo {
   userId: number;
   id: number;
   title: string;
   completed: boolean;
 }
-interface UserWithTodos extends User4 {
-  todos: todos[];
+
+interface UserWithTodos {
+  id: number;
+  name: string;
+  phone: string;
+  address: Address;
+  todos: Todo[];
 }
-export const getTodosByUserId = async (id: number): Promise<UserWithTodos | string> => {
+
+export const getTodosByUserId = async (
+  id: number
+): Promise<UserWithTodos | string> => {
   try {
-    const usersUrl = 'https://jsonplaceholder.typicode.com/users';
-    const todosUrl = 'https://jsonplaceholder.typicode.com/todos';
-    const [usersResponse, todosResponse] = await Promise.all([
+    const usersUrl = "https://jsonplaceholder.typicode.com/users";
+    const todosUrl = "https://jsonplaceholder.typicode.com/todos";
+
+    const [usersRes, todosRes] = await Promise.all([
       axios.get<User4[]>(usersUrl),
-      axios.get<todos[]>(todosUrl)
+      axios.get<Todo[]>(todosUrl),
     ]);
-    const users = usersResponse.data;
-    const todos = todosResponse.data;
-    const foundUser = users.find((user) => user.id === id);
-    if (!foundUser) {
+    const user = usersRes.data.find((u) => u.id === id);
+    if (!user) {
       return "Invalid id";
     }
-    const userTodos = todos.filter((todo) => todo.userId === id);
-    const result: UserWithTodos = {
-      id: foundUser.id,
-      name: foundUser.name,
-      phone: foundUser.phone,
-      address: foundUser.address,
+    const userTodos = todosRes.data.filter(
+      (todo) => todo.userId === id
+    );
+
+    return {
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      address: user.address,
       todos: userTodos,
     };
-    return result;
-
-  } catch (error) {
+  } catch {
     return "Invalid id";
   }
 };
