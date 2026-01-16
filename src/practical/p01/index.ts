@@ -58,4 +58,4 @@ export const getPostalAddress = async (): Promise<Postal[]> => {
     return [];
   }
 };
-getPostalAddress().then((output) => console.log(output));
+getPostalAddress();

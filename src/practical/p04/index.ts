@@ -51,3 +51,4 @@ export const getTodosbyUserId = async (id: number): Promise<UserWithTodos | stri
     return "Invalid id";
   }
 };
+getTodosbyUserId(-1).then((result) => console.log(result));

@@ -64,31 +64,3 @@ export const addUser = async (newData: User2 | null): Promise<formatUser[]> => {
     return [];
   }
 };
-//Example usage
-addUser({
-  id: 1,
-  name: "John Doe",
-  phone: "1234567890",
-  username: "johndoe",
-  email: "johndoe@example.com",
-  address: {
-    street: "123 Main St",
-    suite: "Apt 1",
-    city: "Anytown",
-    zipcode: "12345",
-    geo: {
-      lat: "-37.3159",
-      lng: "81.1496"
-    }
-  },
-  website: "https://johndoe.com",
-  company: {
-    name: "John Doe Company",
-    catchPhrase: "John Doe Company",
-    bs: "John Doe Company"
-  }
-}).then((output) => {
-  // Use JSON.stringify to see the full object structure without [Object]
-  console.log(JSON.stringify(output, null, 2));
-});
-
