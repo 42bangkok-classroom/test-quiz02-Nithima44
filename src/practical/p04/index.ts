@@ -23,7 +23,7 @@ interface todos {
 interface UserWithTodos extends User4 {
   todos: todos[];
 }
-export const getTodosbyUserId = async (id: number): Promise<UserWithTodos | string> => {
+export const getTodosByUserId = async (id: number): Promise<UserWithTodos | string> => {
   try {
     const usersUrl = 'https://jsonplaceholder.typicode.com/users';
     const todosUrl = 'https://jsonplaceholder.typicode.com/todos';
@@ -51,4 +51,3 @@ export const getTodosbyUserId = async (id: number): Promise<UserWithTodos | stri
     return "Invalid id";
   }
 };
-getTodosbyUserId(-1).then((result) => console.log(result));
