@@ -1,4 +1,6 @@
+import axios from 'axios';
 type newUser = {
+  id: number;
   name: string;
   username?: string;
   email?: string;
@@ -20,4 +22,45 @@ type newUser = {
     bs: string;
   };
 };
-export function addUser(newUser: newUser | null) {}
+interface formatUser {
+  id: number;
+  name: string | null;
+  phone: string | null;
+  address: {
+    street: string;
+    suite: string;
+    city: string;
+    zipcode: string;
+    geo: {
+      lat: string;
+      lng: string;
+    };
+  } | null;
+}
+export const addUser = async (newData: newUser | null): Promise<formatUser[]> => {
+  try {
+    const url = 'https://jsonplaceholder.typicode.com/users';
+    const { data } = await axios.get<newUser[] & { id: number }[]>(url);
+    const format: formatUser[] = data.map((user) => ({
+      id: user.id,
+      name: user.name ?? null,
+      phone: user.phone ?? null,
+      address: user.address ?? null,
+    }));
+    if (!newData) {
+      return format;
+    }
+    const lastId = format.length > 0 ? format[format.length - 1].id : 0;
+    const newId = lastId + 1;
+    const newEntry: formatUser = {
+      id: newId,
+      name: newData.name ?? null,
+      address: newData.address ?? null,
+      phone: newData.phone ?? null,
+    };
+    format.push(newEntry);
+    return format;
+  } catch (error) {
+    return [];
+  }
+};
